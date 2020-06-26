@@ -21,7 +21,8 @@
                "Clojure FTW!"])
 
 (defn send-tweet [msg creds]
-  (rest/statuses-update :oauth-creds creds :params {:status msg}))
+  (rest/statuses-update :oauth-creds creds :params {:status msg})
+  (System/exit 0))
 
 (defn -main []
   (send-tweet (rand-nth messages) creds))
