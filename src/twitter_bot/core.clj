@@ -1,7 +1,6 @@
 (ns twitter-bot.core
   (:require [twitter.oauth :as oauth]
             [twitter.api.restful :as rest]))
-;; => nil
 
 
 (defonce app-consumer-key         (System/getenv "TWITTER_CONSUMER_KEY"))
@@ -16,18 +15,28 @@
             user-access-token
             user-access-token-secret))
 
-(def messages ["Clojure is great!"
-               "I love Clojure."
-               "Clojure FTW!"])
 
-(defn send-tweet [msg creds]
+(def naval-messages
+  (->> "naval.txt"
+       clojure.java.io/reader
+       line-seq
+       (take-nth 2)
+       vec))
+
+
+(defn tweet [msg]
+  (rest/statuses-update :oauth-creds creds :params {:status msg}))
+
+
+(defn send-tweet [msg-file]
   (try
-    (let [resp (rest/statuses-update :oauth-creds creds :params {:status msg})]
+    (let [resp (tweet msg)]
       (println (:status resp)))
     (catch Throwable t
       (println (.getMessage t)))
     (finally
       (System/exit 0))))
 
+
 (defn -main []
-  (send-tweet (rand-nth messages) creds))
+  (send-tweet (rand-nth naval-messages) creds))
