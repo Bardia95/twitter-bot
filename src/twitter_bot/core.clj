@@ -22,7 +22,10 @@
 
 (defn send-tweet [msg creds]
   (try
-    (rest/statuses-update :oauth-creds creds :params {:status msg})
+    (let [resp (rest/statuses-update :oauth-creds creds :params {:status msg})]
+      (println (:status resp)))
+    (catch Throwable t
+      (println (.getMessage t)))
     (finally
       (System/exit 0))))
 
